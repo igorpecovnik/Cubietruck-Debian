@@ -84,10 +84,10 @@ echo "------ Compiling sunxi tools"
 cd $DEST/sunxi-tools
 # sunxi-tools
 make clean && make fex2bin
-cp fex2bin /usr/bin/
+#cp fex2bin /usr/bin/
 # hardware configuration
-fex2bin $DEST/cubie_configs/sysconfig/linux/ct-vga.fex $DEST/output/script.bin
-fex2bin $DEST/cubie_configs/sysconfig/linux/ct.fex $DEST/output/script-hdmi.bin
+$DEST/fex2bin $DEST/cubie_configs/sysconfig/linux/ct-vga.fex $DEST/output/script.bin
+$DEST/fex2bin $DEST/cubie_configs/sysconfig/linux/ct.fex $DEST/output/script-hdmi.bin
 
 # kernel image
 echo "------ Compiling kernel"
