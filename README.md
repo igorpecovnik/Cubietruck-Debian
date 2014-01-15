@@ -25,3 +25,4 @@ cd ./Cubietruck-Debian
 Todo List
 ------------------
 - [ ] wifi AP 
+- [ ] script for reconfiguring base system
