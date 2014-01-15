@@ -57,17 +57,22 @@ else
 	git clone https://github.com/patrickhwood/linux-sunxi -b pat-3.4.75-ct $DEST/linux-sunxi # Patwood's kernel 3.4.75+
 fi
 
+# Adding wlan firmware to kernel source
+cd $DEST/linux-sunxi/firmware; wget -q https://www.dropbox.com/s/o3evaiuidtg6xb5/ap6210.zip -O temp.zip; unzip -o temp.zip; rm temp.zip
+
 # Applying Patch for 2gb memory
-patch -f $DEST/u-boot-sunxi/include/configs/sunxi-common.h < patch/memory.patch || true
+#patch -f $DEST/u-boot-sunxi/include/configs/sunxi-common.h < $SRC/patch/memory.patch || true
 
 # Applying Patch for gpio
-patch -f $DEST/linux-sunxi/drivers/gpio/gpio-sunxi.c < patch/gpio.patch || true
+#patch -f $DEST/linux-sunxi/drivers/gpio/gpio-sunxi.c < $SRC/patch/gpio.patch || true
 
 # Applying Patch for high load. Could cause troubles with USB OTG port
 sed -e 's/usb_detect_type     = 1/usb_detect_type     = 0/g' $DEST/cubie_configs/sysconfig/linux/cubietruck.fex > $DEST/cubie_configs/sysconfig/linux/ct.fex
 
-#Change Video output ( TODO add a param so the user can choose that ?)
-sed -e 's/screen0_output_type.*/screen0_output_type     = '$DISPLAY'/g' $DEST/cubie_configs/sysconfig/linux/ct.fex > $DEST/cubie_configs/sysconfig/linux/ct-vga.fex
+# Prepare fex files for VGA & HDMI
+sed -e 's/screen0_output_type.*/screen0_output_type     = 3/g' $DEST/cubie_configs/sysconfig/linux/ct.fex > $DEST/cubie_configs/sysconfig/linux/ct-hdmi.fex
+sed -e 's/screen0_output_type.*/screen0_output_type     = 4/g' $DEST/cubie_configs/sysconfig/linux/ct.fex > $DEST/cubie_configs/sysconfig/linux/ct-vga.fex
+
 
 # Copying Kernel config
 cp $SRC/config/kernel.config $DEST/linux-sunxi/
@@ -83,11 +88,11 @@ make clean && make -j2 'cubietruck' CROSS_COMPILE=arm-linux-gnueabihf-
 echo "------ Compiling sunxi tools"
 cd $DEST/sunxi-tools
 # sunxi-tools
-make clean && make fex2bin
-#cp fex2bin /usr/bin/
+make clean && make fex2bin && make bin2fex
+cp fex2bin bin2fex /usr/local/bin/
 # hardware configuration
-$DEST/fex2bin $DEST/cubie_configs/sysconfig/linux/ct-vga.fex $DEST/output/script.bin
-$DEST/fex2bin $DEST/cubie_configs/sysconfig/linux/ct.fex $DEST/output/script-hdmi.bin
+fex2bin $DEST/cubie_configs/sysconfig/linux/ct-vga.fex $DEST/output/script-vga.bin
+fex2bin $DEST/cubie_configs/sysconfig/linux/ct-hdmi.fex $DEST/output/script-hdmi.bin
 
 # kernel image
 echo "------ Compiling kernel"
@@ -254,17 +259,23 @@ EOT
 echo T0:2345:respawn:/sbin/getty -L ttyS0 115200 vt100 >> $DEST/output/sdcard/etc/inittab
 
 cp $DEST/output/uEnv.txt $DEST/output/sdcard/boot/
-cp $DEST/output/script.bin $DEST/output/sdcard/boot/
 cp $DEST/linux-sunxi/arch/arm/boot/uImage $DEST/output/sdcard/boot/
+
+# copy proper bin file
+if [ $DISPLAY == 4 ]; then
+cp $DEST/output/script-vga.bin $DEST/output/sdcard/boot/script.bin
+else
+cp $DEST/output/script-hdmi.bin $DEST/output/sdcard/boot/script.bin
+fi
 
 cp -R $DEST/linux-sunxi/output/lib/modules $DEST/output/sdcard/lib/
 cp -R $DEST/linux-sunxi/output/lib/firmware/ $DEST/output/sdcard/lib/
 
-cd $DEST/output/sdcard/lib/firmware
-wget https://www.dropbox.com/s/o3evaiuidtg6xb5/ap6210.zip
-unzip ap6210.zip
-rm ap6210.zip
-cd $DEST/
+#cd $DEST/output/sdcard/lib/firmware
+#wget https://www.dropbox.com/s/o3evaiuidtg6xb5/ap6210.zip
+#unzip ap6210.zip
+#rm ap6210.zip
+#cd $DEST/
 
 # USB redirector tools http://www.incentivespro.com
 cd $DEST
