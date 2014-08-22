@@ -6,8 +6,8 @@
 #
 #
 
-RELEASE="wheezy"                                   # jessie(currently broken) or wheezy
-VERSION="CTDebian 2.5 $RELEASE"                    # just name
+RELEASE="wheezy"                                   # jessie or wheezy
+VERSION="CTDebian 2.6 $RELEASE"                    # just name
 SOURCE_COMPILE="yes"                               # yes / no
 DEST_LANG="en_US.UTF-8"                            # sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                          # Timezone
@@ -88,7 +88,7 @@ if [ -d "$DEST/linux-sunxi" ]
 then
 	cd $DEST/linux-sunxi; git pull -f; cd $SRC
 else
-	git clone https://github.com/dan-and/linux-sunxi $DEST/linux-sunxi -b dan-3.4.101               # Stable kernel source
+	git clone https://github.com/dan-and/linux-sunxi $DEST/linux-sunxi -b dan-3.4.103               # Stable kernel source
 fi
 if [ -d "$DEST/sunxi-lirc" ]
 then
@@ -108,11 +108,12 @@ if [ "$SOURCE_COMPILE" = "yes" ]; then
 sed -e 's/.clock = 480/.clock = 432/g' -i $DEST/u-boot-sunxi/board/sunxi/dram_cubieboard2.c 
 
 # Applying patch for crypt and some performance tweaks
-#cd $DEST/linux-sunxi/ 
+cd $DEST/linux-sunxi/ 
 #patch -p1 < $SRC/patch/0001-system-more-responsive-in-case-multiple-tasks.patch
 #patch -p1 < $SRC/patch/crypto.patch
 #patch -p1 < $SRC/patch/disp_vsync.patch
 #patch -p1 < $SRC/patch/chip_id.patch
+patch -p1 < $SRC/patch/gpio.patch
 
 # Applying Patch for "high load". Could cause troubles with USB OTG port
 sed -e 's/usb_detect_type     = 1/usb_detect_type     = 0/g' -i $DEST/cubie_configs/sysconfig/linux/cubietruck.fex 
@@ -134,10 +135,10 @@ cd $DEST/u-boot-sunxi
 make clean && make $CTHREADS 'cubietruck' CROSS_COMPILE=arm-linux-gnueabihf-
 
 # boot loader next
-#cd $DEST/u-boot-sunxi-next
-#make clean && make $CTHREADS Cubietruck_config CROSS_COMPILE=arm-linux-gnueabihf- && make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
+cd $DEST/u-boot-sunxi-next
+make clean && make $CTHREADS Cubietruck_defconfig CROSS_COMPILE=arm-linux-gnueabihf- && make $CTHREADS CROSS_COMPILE=arm-linux-gnueabihf-
 # currently broken. using binary
-cp $SRC/bin/uboot-next.bin $DEST/u-boot-sunxi-next/u-boot-sunxi-with-spl.bin
+#cp $SRC/bin/uboot-next.bin $DEST/u-boot-sunxi-next/u-boot-sunxi-with-spl.bin
 
 # sunxi tools
 echo "------ Compiling sun-xi tools"
@@ -354,7 +355,16 @@ chroot $DEST/output/sdcard /bin/bash -c "chmod +x /etc/init.d/cubian-*"
 # and startable on boot
 chroot $DEST/output/sdcard /bin/bash -c "update-rc.d cubian-firstrun defaults" 
 echo "Installing aditional applications"
-chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install u-boot-tools makedev libfuse2 libc6 libnl-3-dev bluetooth libbluetooth3 libbluetooth-dev lirc alsa-utils netselect-apt sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
+
+# what to install
+PAKETKI=$PAKETKI" u-boot-tools makedev libfuse2 libc6 libnl-3-dev bluetooth libbluetooth3 libbluetooth-dev lirc alsa-utils netselect-apt sysfsutils hddtemp bc figlet toilet screen hdparm libfuse2 ntfs-3g bash-completion lsof sudo git hostapd dosfstools htop openssh-server ca-certificates module-init-tools dhcp3-client udev ifupdown iproute iputils-ping ntp rsync usbutils pciutils wireless-tools wpasupplicant procps parted cpufrequtils unzip bridge-utils"
+
+# some packets are different in jessie
+if [ "$RELEASE" = "jessie" ]; then
+PAKETKI="${PAKETKI//dhcp3-client/isc-dhcp-client}"
+fi
+
+chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install $PAKETKI"
 # removed in 2.4 #chroot $DEST/output/sdcard /bin/bash -c "apt-get -qq -y install console-setup console-data"
 chroot $DEST/output/sdcard /bin/bash -c "apt-get -y clean"
 
@@ -552,12 +562,17 @@ VGA=$VERSION"_vga"
 HDMI=$VERSION"_hdmi"
 #####
 
-sleep 5
+sleep 3
+killall ntpd
 
+killall dbus-daemon
+
+sleep 2
 
 rm $DEST/output/sdcard/usr/bin/qemu-arm-static 
 # umount images 
 umount -l $DEST/output/sdcard/ 
+
 losetup -d $LOOP
 
 cp $DEST/output/debian_rootfs.raw $DEST/output/$HDMI.raw
