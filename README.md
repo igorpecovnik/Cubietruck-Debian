@@ -13,6 +13,8 @@ Read also the FAQ: https://github.com/igorpecovnik/Cubietruck-Debian/wiki/FAQ
 
 Installation steps
 ------------------
+1. <a href=http://releases.ubuntu.com/14.04/>Install Ubuntu 14.04 LTS</a> into your (virtual) PC
+2. Login as root and execute:
 
 ```shell
 sudo apt-get -y install git
