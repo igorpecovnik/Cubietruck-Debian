@@ -423,8 +423,8 @@ echo $HOST > $DEST/output/sdcard/etc/hostname
 
 # set hostname in hosts file
 cat > $DEST/output/sdcard/etc/hosts <<EOT
-127.0.0.1   localhost cubie
-::1         localhost cubie ip6-localhost ip6-loopback
+127.0.0.1   localhost $HOST
+::1         localhost $HOST ip6-localhost ip6-loopback
 fe00::0     ip6-localnet
 ff00::0     ip6-mcastprefix
 ff02::1     ip6-allnodes
