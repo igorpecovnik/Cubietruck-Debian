@@ -1,8 +1,8 @@
-BananaPi Debian
+Cubieboard 2 and Cubietruck Debian
 ================
 ![](https://lh5.googleusercontent.com/-dYQuVFOFVo8/Uw99EtGP46I/AAAAAAAABJ0/WHo_ll6zudA/s768/ctdebian.png)
 
-Script to create bootable SD card image of Debian for Banana PI.
+Script to create bootable SD card image of Debian for Cubieboard 2 and Cubietruck.
 
 [Check build libraries](https://github.com/igorpecovnik/lib)
 
