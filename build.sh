@@ -9,6 +9,7 @@ BOARD="cubietruck"						# bananapi, cubietruck, cubox-i, bananapi-next, cubietru
 RELEASE="wheezy"                                   		# jessie or wheezy
 VERSION="Cubietruck Debian 2.8 $RELEASE"               		# just name
 SOURCE_COMPILE="yes"                               		# yes / no
+KERNEL_CONFIGURE="yes"						# do you want to change my default configuration
 DEST_LANG="en_US.UTF-8"                         	 	# sl_SI.UTF-8, en_US.UTF-8
 TZDATA="Europe/Ljubljana"                         		# Timezone
 DEST=$(pwd)/output                      		      	# Destination
