@@ -1,6 +1,6 @@
 Cubieboard 2 and Cubietruck Debian
 ================
-![](https://lh5.googleusercontent.com/-dYQuVFOFVo8/Uw99EtGP46I/AAAAAAAABJ0/WHo_ll6zudA/s768/ctdebian.png)
+![](http://www.igorpecovnik.com/wp-content/uploads/2014/11/cubietr1.png)
 
 Script to create bootable SD card image of Debian for Cubieboard 2 and Cubietruck.
 
