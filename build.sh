@@ -5,9 +5,9 @@
 # Configuration 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-BOARD="cubietruck"						# bananapi, cubietruck, cubox-i, bananapi-next, cubietruck-next
-RELEASE="wheezy"                                   		# jessie or wheezy
-VERSION="Cubietruck Debian 2.8 $RELEASE"               		# just name
+BOARD="cubietruck"						# cubietruck, cubieboard2, bananapi, cubox-i, bananapi, lime, lime2
+BRANCH="default"						# default=3.4.x, mainline=next
+VERSION="Cubietruck Debian 2.9 $RELEASE"               		# just name
 SOURCE_COMPILE="yes"                               		# yes / no
 KERNEL_CONFIGURE="yes"						# do you want to change my default configuration
 DEST_LANG="en_US.UTF-8"                         	 	# sl_SI.UTF-8, en_US.UTF-8
