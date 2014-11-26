@@ -26,6 +26,10 @@ if [ "$UID" -ne 0 ]
   exit
 fi
 
+if [ "$BRANCH" == "next" ]; then
+	BOARD=$BOARD"-"$BRANCH
+fi
+
 # source is where we start the script
 SRC=$(pwd)
 
