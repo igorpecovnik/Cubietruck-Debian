@@ -21,7 +21,7 @@ Thank you for your donation
 
 DIY
 ------------------
-- [Install Ubuntu 14.04 LTS](http://releases.ubuntu.com/14.04/) into your (virtual) PC
+- [Install Ubuntu 14.10](http://releases.ubuntu.com/14.10/) into your (virtual) PC
 - Login as root and execute:
 ```shell
 sudo apt-get -y install git
