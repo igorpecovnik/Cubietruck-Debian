@@ -5,9 +5,10 @@
 # Configuration 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-BOARD="cubietruck"					# cubieboard, cubieboard2, cubietruck
-BRANCH="default"					# default=3.4.x, mainline=next
+BOARD="cubietruck"				    	# cubieboard, cubieboard2, cubietruck
+BRANCH="default"				    	# default=3.4.x, mainline=next
 RELEASE="wheezy"                                   	# jessie, wheezy (Debian) or trusty (Ubuntu)
+
 # numbers
 SDSIZE="1200"                               			# SD image size in MB
 REVISION="3.1"                          			# image release version
