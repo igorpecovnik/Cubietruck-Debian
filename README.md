@@ -25,6 +25,7 @@ DIY
 - Login as root and execute:
 ```shell
 sudo apt-get -y install git
+sudo apt-get -y install qemu
 cd ~
 git clone https://github.com/igorpecovnik/Cubietruck-Debian
 chmod +x ./Cubietruck-Debian/build.sh
